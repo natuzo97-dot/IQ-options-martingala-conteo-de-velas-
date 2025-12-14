@@ -133,11 +133,11 @@ def sincronizar_proximo_minuto():
     # Esperar hasta 0.5 segundos antes del minuto exacto
     if tiempo_restante > 0.5:
         time.sleep(tiempo_restante - 0.5)
-    
+
     # Espera activa para máxima precisión
     inicio = time.time()
     while time.time() - inicio < 0.5:
-        pass  # Espera activa los últimos 0.5 segundos
+        time.sleep(0.05)  # Reducir CPU durante la espera activa
     
     return minuto_objetivo
 
@@ -165,12 +165,12 @@ def ejecutar_operacion(iq, activo, direccion, monto, tiempo_operacion):
         # CALCULAR TIEMPO DE ESPERA EXACTO
         tiempo_transcurrido = time.time() - tiempo_inicio_operacion
         tiempo_faltante = max(0, (tiempo_operacion * 60) - tiempo_transcurrido)
-        
+
         print(f"⏳ Tiempo transcurrido: {tiempo_transcurrido:.2f}s, faltante: {tiempo_faltante:.2f}s")
-        
-        # Esperar tiempo exacto que falta + margen de seguridad
+
+        # Esperar solo lo indispensable para no perder el siguiente minuto
         if tiempo_faltante > 0:
-            time.sleep(tiempo_faltante + 5)  # 5 segundos extra de seguridad
+            time.sleep(tiempo_faltante + 1)
         
         # VERIFICACIÓN CON REINTENTOS
         print("🔍 Verificando resultado...")
@@ -316,5 +316,3 @@ if __name__ == "__main__":
             analizar_y_operar(iq)
         except KeyboardInterrupt:
             print("\n🛑 Bot detenido por el usuario")
-
-            #este bot esta mejorado, ya no tiene el error de los resultados pero opera cada dos minutos 
